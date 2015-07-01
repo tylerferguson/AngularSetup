@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/tylerferguson/AngularSetup#readme",
   "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-angular-protractor": "0.0.2",
     "jasmine-core": "^2.3.4",
     "karma": "^0.12.37",
     "karma-chrome-launcher": "^0.2.0",
