@@ -1,0 +1,25 @@
+{
+  "name": "angularsetup",
+  "version": "1.0.0",
+  "description": "Setup for angular project",
+  "main": "app.module.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tylerferguson/AngularSetup.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tylerferguson/AngularSetup/issues"
+  },
+  "homepage": "https://github.com/tylerferguson/AngularSetup#readme",
+  "devDependencies": {
+    "jasmine-core": "^2.3.4",
+    "karma": "^0.12.37",
+    "karma-chrome-launcher": "^0.2.0",
+    "karma-jasmine": "^0.3.6"
+  }
+}
