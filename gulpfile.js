@@ -1,6 +1,7 @@
 var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 var angularProtractor = require('gulp-angular-protractor');
+var karma = require('karma').server;
 
 var stream;
 
@@ -21,6 +22,13 @@ gulp.task('protractor', ['webserver:start'], function() {
             'args': ['--baseUrl', 'http://localhost:8000'],
             'autoStartStopServer': true
         }));
+});
+
+gulp.task('test:unit', function() {
+    karma.start({
+        'configFile': __dirname + '/karma.conf.js',
+        'singleRun': true
+    })
 });
 
 gulp.task('e2eTests', ['webserver:stop']);
