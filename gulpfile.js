@@ -2,6 +2,7 @@ var gulp = require('gulp');
 var webserver = require('gulp-webserver');
 var angularProtractor = require('gulp-angular-protractor');
 var karma = require('karma').server;
+var jshint = require('gulp-jshint');
 
 var stream;
 
@@ -29,6 +30,12 @@ gulp.task('test:unit', function() {
         'configFile': __dirname + '/karma.conf.js',
         'singleRun': true
     })
+});
+
+gulp.task('lint', function() {
+    gulp.src('app/**/*.js')
+        .pipe(jshint())
+        .pipe(jshint.reporter('jshint-stylish'));
 });
 
 gulp.task('e2eTests', ['webserver:stop']);

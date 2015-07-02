@@ -19,8 +19,10 @@
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-angular-protractor": "0.0.2",
+    "gulp-jshint": "^1.11.2",
     "gulp-webserver": "^0.9.1",
     "jasmine-core": "^2.3.4",
+    "jshint-stylish": "^2.0.1",
     "karma": "^0.12.37",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6"
