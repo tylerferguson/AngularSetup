@@ -7,7 +7,7 @@ var jshint = require('gulp-jshint');
 var stream;
 
 gulp.task('webserver-start', function() {
-    return stream = gulp.src('app')
+    return stream = gulp.src('./')
         .pipe(webserver());
 });
 
@@ -20,7 +20,7 @@ gulp.task('protractor', ['webserver-start'], function() {
         .pipe(angularProtractor({
             'configFile': 'protractor.conf.js',
             'debug': true,
-            'args': ['--baseUrl', 'http://localhost:8000'],
+            'args': ['--baseUrl', 'http://localhost:8000/'],
             'autoStartStopServer': true
         }))
         .on('error', function(e) {
