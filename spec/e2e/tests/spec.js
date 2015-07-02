@@ -2,7 +2,7 @@
 describe('Mobile', function() {
 
     beforeEach(function() {
-        browser.get('http://localhost:63342/AngularSetup/app/index.html');
+        browser.get('/');
     });
 
     it('should have a title', function() {

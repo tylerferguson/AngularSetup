@@ -1,12 +1,27 @@
 var gulp = require('gulp');
+var webserver = require('gulp-webserver');
 var angularProtractor = require('gulp-angular-protractor');
 
-gulp.task('protractor', function() {
-    gulp.src(['./spec/e2e/tests/*.js'])
-        .pipe(angularProtractor({
-            'configFile': 'protractor.conf.js',
-            'debug': true
-        }))
+var stream;
+
+gulp.task('webserver:start', function() {
+    return stream = gulp.src('app')
+        .pipe(webserver());
 });
 
-gulp.task('default', ['protractor']);
+gulp.task('webserver:stop', ['protractor'], function() {
+    stream.emit('kill');
+});
+
+gulp.task('protractor', ['webserver:start'], function() {
+    return gulp.src(['./spec/e2e/tests/*.js'])
+        .pipe(angularProtractor({
+            'configFile': 'protractor.conf.js',
+            'debug': true,
+            'args': ['--baseUrl', 'http://localhost:8000'],
+            'autoStartStopServer': true
+        }));
+});
+
+gulp.task('e2eTests', ['webserver:stop']);
+gulp.task('default', ['e2eTests']);
