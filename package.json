@@ -29,6 +29,7 @@
     "karma": "^0.12.37",
     "karma-chrome-launcher": "^0.2.0",
     "karma-jasmine": "^0.3.6",
-    "stream-series": "^0.1.1"
+    "stream-series": "^0.1.1",
+    "gulp-sass": "~2.0.3"
   }
 }

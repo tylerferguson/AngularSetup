@@ -7,6 +7,7 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
+var sass = require('gulp-sass');
 
 var stream;
 
@@ -57,6 +58,12 @@ gulp.task('bundle-js', function() {
     streamSeries(vendor, src)
        .pipe(concat('app_bundle.js'))
        .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('sass-transpile', function() {
+    gulp.src('./sass/**/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('./app/css'));
 });
 
 gulp.task('test-e2e', ['webserver-stop']);
