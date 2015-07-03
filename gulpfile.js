@@ -47,18 +47,15 @@ gulp.task('lint', function() {
         .pipe(jshint.reporter('jshint-stylish'));
 });
 
-//Should be a way to do this with chaining streams rather than merging
 gulp.task('bundle-js', function() {
     var vendor = gulp.src('bower_components/**/*.min.js')
         .pipe(concatVendor('vendor.js'));
 
     var src = gulp.src(['app/app.module.js', 'app/**/*.js'])
-        .pipe(concat('app.js'))
         .pipe(uglify());
-
     streamSeries(vendor, src)
-       .pipe(concat('app_bundle.js'))
-       .pipe(gulp.dest('./dist'));
+        .pipe(concat('app_bundle.js'))
+        .pipe(gulp.dest('./dist'));
 });
 
 gulp.task('replace-script-tags', function() {
