@@ -9,18 +9,18 @@ var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
 var htmlReplace = require('gulp-html-replace');
 
-var stream;
+var e2eContentServer;
 
-gulp.task('webserver-start', ['test-unit'], function() {
-    return stream = gulp.src('./')
+gulp.task('protractor-start', ['test-unit'], function() {
+    return e2eContentServer = gulp.src('./')
         .pipe(webserver());
 });
 
-gulp.task('webserver-stop', ['protractor'], function() {
-    stream.emit('kill');
+gulp.task('protractor-stop', ['protractor'], function() {
+    e2eContentServer.emit('kill');
 });
 
-gulp.task('protractor', ['webserver-start'], function() {
+gulp.task('protractor', ['protractor-start'], function() {
     return gulp.src(['./spec/e2e/tests/*.js'])
         .pipe(angularProtractor({
             'configFile': 'protractor.conf.js',
@@ -29,7 +29,7 @@ gulp.task('protractor', ['webserver-start'], function() {
             'autoStartStopServer': true
         }))
         .on('error', function(e) {
-            stream.emit('kill');
+            e2eContentServer.emit('kill');
         });
 });
 
@@ -68,6 +68,6 @@ gulp.task('replace-script-tags', function() {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('test-e2e', ['webserver-stop']);
+gulp.task('test-e2e', ['protractor-stop']);
 gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags']);
 gulp.task('default', ['lint', 'test-unit']);
