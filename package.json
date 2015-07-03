@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/tylerferguson/AngularSetup#readme",
   "devDependencies": {
+    "cordova-lib": "^5.1.1",
+    "del": "^1.2.0",
+    "fs": "0.0.2",
     "gulp": "^3.9.0",
     "gulp-angular-protractor": "0.0.2",
     "gulp-concat": "^2.6.0",

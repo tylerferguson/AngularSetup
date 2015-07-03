@@ -9,6 +9,11 @@ var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
 var htmlReplace = require('gulp-html-replace');
 var sass = require('gulp-sass');
+var cordova = require('cordova-lib').cordova.raw;
+var del = require('del');
+var fs = require('fs');
+
+var platforms = ['android'];
 
 var e2eContentServer;
 
@@ -74,6 +79,15 @@ gulp.task('sass-transpile', function() {
         .pipe(gulp.dest('dist'));
 });
 
+gulp.task('cordova-recreate', function() {
+    process.chdir('cordova');
+    return del(['www', 'platforms', 'plugins'], function(){
+        fs.mkdirSync('www');
+        return cordova.platform('add', platforms);
+    });
+});
+
+gulp.task('init', ['cordova-recreate']);
 gulp.task('test-e2e', ['protractor-stop']);
 gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
 gulp.task('default', ['lint', 'test-unit']);
