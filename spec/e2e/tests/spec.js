@@ -2,7 +2,7 @@
 describe('Mobile', function() {
 
     beforeEach(function() {
-        browser.get('/');
+        browser.get('/app');
     });
 
     it('should have a title', function() {
