@@ -8,6 +8,7 @@ var concat = require('gulp-concat');
 var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
 var htmlReplace = require('gulp-html-replace');
+var sass = require('gulp-sass');
 
 var e2eContentServer;
 
@@ -63,11 +64,19 @@ gulp.task('bundle-js', function() {
 gulp.task('replace-script-tags', function() {
     gulp.src('app/index.html')
         .pipe(htmlReplace({
-            'js': 'app_bundle.js'
+            'js': 'app_bundle.js',
+            'css': 'app.css'
         }))
         .pipe(gulp.dest('dist'));
 });
 
+gulp.task('sass-transpile', function() {
+    gulp.src('./sass/**/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('./app/css'))
+        .pipe(gulp.dest('dist'));
+});
+
 gulp.task('test-e2e', ['protractor-stop']);
-gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags']);
+gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
 gulp.task('default', ['lint', 'test-unit']);
