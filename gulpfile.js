@@ -87,6 +87,16 @@ gulp.task('cordova-recreate', function() {
     });
 });
 
+gulp.task('cordova-copy', ['release'], function() {
+    return gulp.src('dist/*')
+        .pipe(gulp.dest('cordova/www'));
+});
+
+gulp.task('cordova-build',['cordova-copy'], function() {
+    process.chdir('cordova');
+    return cordova.build();
+});
+
 gulp.task('init', ['cordova-recreate']);
 gulp.task('test-e2e', ['protractor-stop']);
 gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
