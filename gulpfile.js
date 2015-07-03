@@ -7,10 +7,11 @@ var uglify = require('gulp-uglify');
 var concat = require('gulp-concat');
 var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
+var htmlReplace = require('gulp-html-replace');
 
 var stream;
 
-gulp.task('webserver-start', function() {
+gulp.task('webserver-start', ['test-unit'], function() {
     return stream = gulp.src('./')
         .pipe(webserver());
 });
@@ -32,11 +33,11 @@ gulp.task('protractor', ['webserver-start'], function() {
         });
 });
 
-gulp.task('test-unit', function() {
+gulp.task('test-unit', function(cb) {
     karma.start({
         'configFile': __dirname + '/karma.conf.js',
         'singleRun': true
-    })
+    }, cb);
 });
 
 gulp.task('lint', function() {
@@ -59,5 +60,14 @@ gulp.task('bundle-js', function() {
        .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('replace-script-tags', function() {
+    gulp.src('app/index.html')
+        .pipe(htmlReplace({
+            'js': 'app_bundle.js'
+        }))
+        .pipe(gulp.dest('dist'));
+});
+
 gulp.task('test-e2e', ['webserver-stop']);
+gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags']);
 gulp.task('default', ['lint', 'test-unit']);

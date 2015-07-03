@@ -21,6 +21,7 @@
     "gulp-angular-protractor": "0.0.2",
     "gulp-concat": "^2.6.0",
     "gulp-concat-vendor": "0.0.4",
+    "gulp-html-replace": "^1.5.1",
     "gulp-jshint": "^1.11.2",
     "gulp-uglify": "^1.2.0",
     "gulp-webserver": "^0.9.1",
