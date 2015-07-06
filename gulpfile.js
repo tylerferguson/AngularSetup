@@ -28,7 +28,7 @@ var platforms = ['android'];
 
 var e2eContentServer;
 
-gulp.task('protractor-start', ['test-unit'], function() {
+gulp.task('protractor-start', ['default'], function() {
     return e2eContentServer = gulp.src('./')
         .pipe(webserver());
 });
@@ -98,7 +98,7 @@ gulp.task('cordova-recreate', function() {
     });
 });
 
-gulp.task('cordova-copy', ['release'], function() {
+gulp.task('cordova-copy', ['desktop-build'], function() {
     return gulp.src('dist/*')
         .pipe(gulp.dest('cordova/www'));
 });
@@ -110,6 +110,7 @@ gulp.task('cordova-build',['cordova-copy'], function() {
 });
 
 gulp.task('init', ['cordova-recreate']);
+gulp.task('desktop-build', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
 gulp.task('test-e2e', ['protractor-stop']);
-gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
+gulp.task('release', ['cordova-build']);
 gulp.task('default', ['lint', 'test-unit']);
