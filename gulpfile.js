@@ -90,15 +90,26 @@ gulp.task('cordova-add-platforms',['cordova-setup'], function() {
 });
 
 gulp.task('cordova-build',['cordova-add-platforms'], function() {
+    return cordova.build({options: ['--release']});
+});
+
+gulp.task('cordova-build-debug',['cordova-add-platforms'], function() {
     return cordova.build();
 });
+
 gulp.task('cordova-release', ['cordova-build'], function() {
-    return gulp.src('platforms/android/build/outputs/apk/android.apk')
+    return gulp.src('platforms/android/build/outputs/apk/android-release-unsigned.apk')
+        .pipe(gulp.dest('../dist/mobile'));
+});
+
+gulp.task('cordova-debug', ['cordova-build-debug'], function() {
+    return gulp.src('platforms/android/build/outputs/apk/android-debug.apk')
         .pipe(gulp.dest('../dist/mobile'));
 });
 
 gulp.task('init', ['cordova-recreate']);
 gulp.task('desktop-build', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
 gulp.task('test-e2e', ['protractor-stop']);
+gulp.task('debug', ['cordova-debug']);
 gulp.task('release', ['cordova-release']);
 gulp.task('default', ['lint', 'test-unit']);
