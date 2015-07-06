@@ -11,18 +11,6 @@ var htmlReplace = require('gulp-html-replace');
 var sass = require('gulp-sass');
 var cordova = require('cordova-lib').cordova.raw;
 var del = require('del');
-var fs = require('fs');
-
-function cordovaExecute(cb) {
-    process.chdir('cordova');
-    try {
-        cb();
-    } catch (e) {
-        throw e;
-    } finally {
-        process.chdir(__dirname);
-    }
-}
 
 var platforms = ['android'];
 
@@ -90,23 +78,19 @@ gulp.task('sass-transpile', function() {
         .pipe(gulp.dest('dist'));
 });
 
-gulp.task('cordova-recreate', function() {
-    cordovaExecute(function() {
-        del.sync(['www', 'platforms', 'plugins']);
-        fs.mkdirSync('www');
-        cordova.platform('add', platforms);
-    });
+gulp.task('cordova-setup', ['desktop-build'], function() {
+    process.chdir('cordova');
+    del.sync(['www', 'platforms', 'plugins']);
+    return gulp.src('../dist/*')
+        .pipe(gulp.dest('www'));
 });
 
-gulp.task('cordova-copy', ['desktop-build'], function() {
-    return gulp.src('dist/*')
-        .pipe(gulp.dest('cordova/www'));
+gulp.task('cordova-add-platforms',['cordova-setup'], function() {
+    return cordova.platform('add', platforms);
 });
 
-gulp.task('cordova-build',['cordova-copy'], function() {
-    cordovaExecute(function() {
-        cordova.build();
-    });
+gulp.task('cordova-build',['cordova-add-platforms'], function() {
+    return cordova.build();
 });
 
 gulp.task('init', ['cordova-recreate']);
