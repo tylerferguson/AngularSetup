@@ -13,6 +13,17 @@ var cordova = require('cordova-lib').cordova.raw;
 var del = require('del');
 var fs = require('fs');
 
+function cordovaExecute(cb) {
+    process.chdir('cordova');
+    try {
+        cb();
+    } catch (e) {
+        throw e;
+    } finally {
+        process.chdir(__dirname);
+    }
+}
+
 var platforms = ['android'];
 
 var e2eContentServer;
@@ -80,10 +91,10 @@ gulp.task('sass-transpile', function() {
 });
 
 gulp.task('cordova-recreate', function() {
-    process.chdir('cordova');
-    return del(['www', 'platforms', 'plugins'], function(){
+    cordovaExecute(function() {
+        del.sync(['www', 'platforms', 'plugins']);
         fs.mkdirSync('www');
-        return cordova.platform('add', platforms);
+        cordova.platform('add', platforms);
     });
 });
 
@@ -93,8 +104,9 @@ gulp.task('cordova-copy', ['release'], function() {
 });
 
 gulp.task('cordova-build',['cordova-copy'], function() {
-    process.chdir('cordova');
-    return cordova.build();
+    cordovaExecute(function() {
+        cordova.build();
+    });
 });
 
 gulp.task('init', ['cordova-recreate']);
