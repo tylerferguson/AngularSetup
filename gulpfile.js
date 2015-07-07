@@ -9,10 +9,14 @@ var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
 var htmlReplace = require('gulp-html-replace');
 var sass = require('gulp-sass');
+var cordova = require('cordova-lib').cordova.raw;
+var del = require('del');
+
+var platforms = ['android'];
 
 var e2eContentServer;
 
-gulp.task('protractor-start', ['test-unit'], function() {
+gulp.task('protractor-start', ['default'], function() {
     return e2eContentServer = gulp.src('./')
         .pipe(webserver());
 });
@@ -55,7 +59,7 @@ gulp.task('bundle-js', function() {
         .pipe(uglify());
     streamSeries(vendor, src)
         .pipe(concat('app_bundle.js'))
-        .pipe(gulp.dest('./dist'));
+        .pipe(gulp.dest('./dist/desktop'));
 });
 
 gulp.task('replace-script-tags', function() {
@@ -64,16 +68,48 @@ gulp.task('replace-script-tags', function() {
             'js': 'app_bundle.js',
             'css': 'app.css'
         }))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist/desktop'));
 });
 
 gulp.task('sass-transpile', function() {
     gulp.src('./sass/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./app/css'))
-        .pipe(gulp.dest('dist'));
+        .pipe(gulp.dest('dist/desktop'));
 });
 
+gulp.task('cordova-setup', ['desktop-build'], function() {
+    process.chdir('cordova');
+    del.sync(['www', 'platforms', 'plugins']);
+    return gulp.src('../dist/desktop/*')
+        .pipe(gulp.dest('www'));
+});
+
+gulp.task('cordova-add-platforms',['cordova-setup'], function() {
+    return cordova.platform('add', platforms);
+});
+
+gulp.task('cordova-build',['cordova-add-platforms'], function() {
+    return cordova.build({options: ['--release']});
+});
+
+gulp.task('cordova-build-debug',['cordova-add-platforms'], function() {
+    return cordova.build();
+});
+
+gulp.task('cordova-release', ['cordova-build'], function() {
+    return gulp.src('platforms/android/build/outputs/apk/android-release-unsigned.apk')
+        .pipe(gulp.dest('../dist/mobile'));
+});
+
+gulp.task('cordova-debug', ['cordova-build-debug'], function() {
+    return gulp.src('platforms/android/build/outputs/apk/android-debug.apk')
+        .pipe(gulp.dest('../dist/mobile'));
+});
+
+gulp.task('init', ['cordova-recreate']);
+gulp.task('desktop-build', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
 gulp.task('test-e2e', ['protractor-stop']);
-gulp.task('release', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
+gulp.task('debug', ['cordova-debug']);
+gulp.task('release', ['cordova-release']);
 gulp.task('default', ['lint', 'test-unit']);
