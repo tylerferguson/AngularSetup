@@ -6,19 +6,25 @@
     </head>
     <body ng-app="Mobile">
         <div ng-controller="MainCtrl">
-            <span>{{message}}</span>
-            <div>
-                <label>
-                    Typing here:
-                    <input type="text" ng-model="typedMessage">
-                </label>
-                <span>Shows up here: </span>
-                <span>{{typedMessage}}</span>
+            <div class="row">
+                <div class="small-9 columns">{{message}}</div>
             </div>
-
+            <div class="row">
+                <div class="small-12 medium-6 columns">
+                    <label>
+                        Typing here:
+                        <input type="text" ng-model="typedMessage">
+                    </label>
+                 </div>
+                <div class="small-12 medium-6 columns">
+                    <span>Shows up here: </span>
+                    <span>{{typedMessage}}</span>
+                </div>
+            </div>
         </div>
 
         <!--build:css-->
+        <link href="../bower_components/foundation/css/foundation.min.css"/>
         <link href="css/app.css" rel="stylesheet" type="text/css"/>
         <!--endbuild-->
 
@@ -27,5 +33,6 @@
         <script type="text/javascript" src="app.module.js"></script>
         <script type="text/javascript" src="main.controller.js"></script>
         <!--endbuild-->
+
     </body>
 </html>

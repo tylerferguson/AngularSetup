@@ -60,19 +60,24 @@ gulp.task('bundle-js', function() {
         .pipe(gulp.dest('./dist/desktop'));
 });
 
+gulp.task('sass-transpile', function() {
+    return gulp.src('./sass/**/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('./app/css'));
+});
+
+gulp.task('bundle-css', ['sass-transpile'], function() {
+    gulp.src(['bower_components/foundation/css/foundation.min.css', 'app/css/app.css'])
+        .pipe(concat('app_bundle.css'))
+        .pipe(gulp.dest('./dist/desktop'))
+});
+
 gulp.task('replace-script-tags', function() {
     gulp.src('app/index.html')
         .pipe(htmlReplace({
             'js': 'app_bundle.js',
-            'css': 'app.css'
+            'css': 'app_bundle.css'
         }))
-        .pipe(gulp.dest('dist/desktop'));
-});
-
-gulp.task('sass-transpile', function() {
-    gulp.src('./sass/**/*.scss')
-        .pipe(sass().on('error', sass.logError))
-        .pipe(gulp.dest('./app/css'))
         .pipe(gulp.dest('dist/desktop'));
 });
 
@@ -91,7 +96,7 @@ gulp.task('cordova-android', ['cordova-setup'], function() {
         });
 });
 
-gulp.task('desktop-build', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
+gulp.task('desktop-build', ['default', 'test-e2e', 'bundle-js', 'bundle-css', 'replace-script-tags']);
 gulp.task('test-e2e', ['protractor-stop']);
 gulp.task('release', ['cordova-android']);
 gulp.task('default', ['lint', 'test-unit']);
