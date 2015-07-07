@@ -9,10 +9,8 @@ var concatVendor = require('gulp-concat-vendor');
 var streamSeries = require('stream-series');
 var htmlReplace = require('gulp-html-replace');
 var sass = require('gulp-sass');
-var cordova = require('cordova-lib').cordova.raw;
 var del = require('del');
-
-var platforms = ['android'];
+var android = require('gulp-cordova-build-android');
 
 var e2eContentServer;
 
@@ -79,37 +77,21 @@ gulp.task('sass-transpile', function() {
 });
 
 gulp.task('cordova-setup', ['desktop-build'], function() {
-    process.chdir('cordova');
-    del.sync(['www', 'platforms', 'plugins']);
-    return gulp.src('../dist/desktop/*')
-        .pipe(gulp.dest('www'));
+    del.sync(['cordova/www', 'cordova/platforms', 'cordova/plugins']);
+    return gulp.src('dist/desktop/*')
+        .pipe(gulp.dest('cordova/www'));
 });
 
-gulp.task('cordova-add-platforms',['cordova-setup'], function() {
-    return cordova.platform('add', platforms);
+gulp.task('cordova-android', ['cordova-setup'], function() {
+    return gulp.src('cordova')
+        .pipe(android())
+        .pipe(gulp.dest('dist/mobile'))
+        .on('end', function () {
+            process.chdir(__dirname);
+        });
 });
 
-gulp.task('cordova-build',['cordova-add-platforms'], function() {
-    return cordova.build({options: ['--release']});
-});
-
-gulp.task('cordova-build-debug',['cordova-add-platforms'], function() {
-    return cordova.build();
-});
-
-gulp.task('cordova-release', ['cordova-build'], function() {
-    return gulp.src('platforms/android/build/outputs/apk/android-release-unsigned.apk')
-        .pipe(gulp.dest('../dist/mobile'));
-});
-
-gulp.task('cordova-debug', ['cordova-build-debug'], function() {
-    return gulp.src('platforms/android/build/outputs/apk/android-debug.apk')
-        .pipe(gulp.dest('../dist/mobile'));
-});
-
-gulp.task('init', ['cordova-recreate']);
 gulp.task('desktop-build', ['default', 'test-e2e', 'bundle-js', 'replace-script-tags', 'sass-transpile']);
 gulp.task('test-e2e', ['protractor-stop']);
-gulp.task('debug', ['cordova-debug']);
-gulp.task('release', ['cordova-release']);
+gulp.task('release', ['cordova-android']);
 gulp.task('default', ['lint', 'test-unit']);
