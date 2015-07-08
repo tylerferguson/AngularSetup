@@ -43,13 +43,17 @@ gulp.task('test-unit', function(cb) {
     }, cb);
 });
 
+gulp.task('clean', function(cb) {
+    del(['dist', 'app/css', 'cordova/www', 'cordova/platforms', 'cordova/plugins'], cb)
+});
+
 gulp.task('lint', function() {
     gulp.src('app/**/*.js')
         .pipe(jshint())
         .pipe(jshint.reporter('jshint-stylish'));
 });
 
-gulp.task('bundle-js', function() {
+gulp.task('bundle-js', ['clean'], function() {
     var vendor = gulp.src('bower_components/**/*.min.js')
         .pipe(concatVendor('vendor.js'));
 
@@ -60,7 +64,7 @@ gulp.task('bundle-js', function() {
         .pipe(gulp.dest('./dist/desktop'));
 });
 
-gulp.task('sass-transpile', function() {
+gulp.task('sass-transpile', ['clean'], function() {
     return gulp.src('./sass/**/*.scss')
         .pipe(sass().on('error', sass.logError))
         .pipe(gulp.dest('./app/css'));
@@ -72,7 +76,7 @@ gulp.task('bundle-css', ['sass-transpile'], function() {
         .pipe(gulp.dest('./dist/desktop'))
 });
 
-gulp.task('replace-script-tags', function() {
+gulp.task('replace-script-tags', ['clean'],function() {
     gulp.src('app/index.html')
         .pipe(htmlReplace({
             'js': 'app_bundle.js',
@@ -82,7 +86,6 @@ gulp.task('replace-script-tags', function() {
 });
 
 gulp.task('cordova-setup', ['desktop-build'], function() {
-    del.sync(['cordova/www', 'cordova/platforms', 'cordova/plugins']);
     return gulp.src('dist/desktop/*')
         .pipe(gulp.dest('cordova/www'));
 });
